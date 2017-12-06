@@ -1,4 +1,4 @@
-package main.java.com.vu;
+package com.vu;
 
 
 
@@ -16,30 +16,28 @@ public class InventoryDatabase {
     private static final String user = System.getenv("MYSQL_USER");
     private static final String password = System.getenv("MYSQL_PASSWORD");
 
+    public static final String PK_COLUMN = "id";
+    public static final String PRODUCT_COLUMN = "product";
+    public static final String BRAND_COLUMN = "brand";
+    public static final String TYPE_COLUMN = "product_type";
+    public static final String OFFICE_COUNT_COLUMN = "amount_in_office";
+    public static final String BAR_COUNT_COLUMN = "amount_in_bar";
+    public static final String TOTAL_COLUMN = "total_amount";
+    public static final String ORDER_COLUMN = "order_more";
+    public static final String DISTRIBUTOR_COLUMN = "distributor";
+
 
     private static Statement statement = null;
     private static Connection conn = null;
     private static ResultSet rs = null;
 
-    protected final static String LIQUOR_TABLE_NAME = "liquor";
-    protected final static String BEER_TABLE_NAME = "beer";
-    protected final static String WINE_TABLE_NAME = "wine";
+    private final static String ALCOHOL_TABLE_NAME = "alcohol";
 
-    protected final static String PK_COLUMN = "id";
-    protected final static String PRODUCT_COLUMN = "product";
-    protected final static String BRAND_COLUMN = "brand";
-    protected final static String TYPE_COLUMN = "product_type";
-    protected final static String OFFICE_COUNT_COLUMN = "amount_in_office";
-    protected final static String BAR_COUNT_COLUMN = "amount_in_bar";
-    protected final static String TOTAL_COLUMN = "total_amount";
-    protected final static String ORDER_COLUMN = "order_more";
-    protected final static String DISTRIBUTOR_COLUMN = "distributor";
 
 
     static double amountInOffice, amountInBar, totalAmount;
 
     public double par = 3;
-
 
     private static InventoryDataModel inventoryDataModel;
 
@@ -48,6 +46,8 @@ public class InventoryDatabase {
         loadAllProduct();
 
         InventoryGUI inventoryGUI = new InventoryGUI(inventoryDataModel);
+
+
     }
 
     static double getTotalAmount(double amountInOffice, double amountInBar) {
@@ -70,7 +70,7 @@ public class InventoryDatabase {
             rs.close();
         }
 
-        String getAllData = "SELECT * FROM " + LIQUOR_TABLE_NAME;
+        String getAllData = "SELECT * FROM " + ALCOHOL_TABLE_NAME;
         rs = statement.executeQuery(getAllData);
 
         if (inventoryDataModel == null) {
@@ -91,17 +91,21 @@ public class InventoryDatabase {
         conn = DriverManager.getConnection(db_url + db_name, user, password);
         statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS " + LIQUOR_TABLE_NAME
-                    + " (" + PK_COLUMN + " int NOT NULL AUTO_INCREMENT, " + PRODUCT_COLUMN + " VARCHAR(50), "
-                    + BRAND_COLUMN + " VARCHAR(50), " + TYPE_COLUMN + " VARCHAR(50), "
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS " + ALCOHOL_TABLE_NAME
+                    + " (" + PK_COLUMN + " int NOT NULL AUTO_INCREMENT, "
+                    + PRODUCT_COLUMN + " VARCHAR(50), "
+                    + BRAND_COLUMN + " VARCHAR(50), "
+                    + TYPE_COLUMN + " VARCHAR(50), "
                     + OFFICE_COUNT_COLUMN + " double, "
-                    + BAR_COUNT_COLUMN + " double, " + TOTAL_COLUMN
-                    + " double, " + ORDER_COLUMN + " VARCHAR(50), " + DISTRIBUTOR_COLUMN
-                    + " VARCHAR(50), PRIMARY KEY(" + PK_COLUMN + "))";
-        System.out.println(createTableSQL);
-        statement.executeUpdate(createTableSQL);
+                    + BAR_COUNT_COLUMN + " double, "
+                    + TOTAL_COLUMN + " double, "
+                    + ORDER_COLUMN + " VARCHAR(50), "
+                    + DISTRIBUTOR_COLUMN + " VARCHAR(50), PRIMARY KEY(" + PK_COLUMN + "))";
+            System.out.println(createTableSQL);
+            statement.executeUpdate(createTableSQL);
 
-        System.out.println("created liquor table");
+            System.out.println("created liquor table");
+
 
         if (statement.getWarnings() == null) {
             addAlcoholData();
@@ -138,24 +142,20 @@ public class InventoryDatabase {
         }
     }
 
-    static void addAlcoholData() throws SQLException {
-        String addDataSQL = "INSERT INTO " + LIQUOR_TABLE_NAME + "(" + PRODUCT_COLUMN + ", " + BRAND_COLUMN + ", "
-                    + TYPE_COLUMN + ", " + OFFICE_COUNT_COLUMN + ", " + BAR_COUNT_COLUMN + ", " + ORDER_COLUMN + ", "
-                    + DISTRIBUTOR_COLUMN + ")" + " VALUES (?,?,?,?,?,?,?,?)";
+    private static void addAlcoholData() throws SQLException {
+        String addDataSQL = "INSERT INTO " + ALCOHOL_TABLE_NAME + "("
+                    + PRODUCT_COLUMN + ", "
+                    + BRAND_COLUMN + ", "
+                    + TYPE_COLUMN + ", "
+                    + OFFICE_COUNT_COLUMN + ", "
+                    + BAR_COUNT_COLUMN + ", "
+                    + TOTAL_COLUMN + ", "
+                    + DISTRIBUTOR_COLUMN + ")"
+                    + " VALUES (?,?,?,?,?,?,?)";
         statement.executeUpdate(addDataSQL);
     }
 
-    static void updateAlcoholData(double newOfficeCount, double newBarCount, double newTotal) throws SQLException {
-        String updateDataSQL = "UPDATE "+ LIQUOR_TABLE_NAME +" SET "
-                    + OFFICE_COUNT_COLUMN + "=?," + BAR_COUNT_COLUMN + "=?, "
-                    + TOTAL_COLUMN + "=? WHERE " + TYPE_COLUMN + "=?";
-        PreparedStatement updateSQL = conn.prepareStatement(updateDataSQL);
 
-        updateSQL.setDouble(1, newOfficeCount);
-        updateSQL.setDouble(2, newBarCount);
-        updateSQL.setDouble(3, newTotal);
-        updateSQL.executeUpdate();
-    }
 
 
 

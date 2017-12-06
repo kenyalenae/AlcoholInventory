@@ -1,4 +1,4 @@
-package main.java.com.vu;
+package com.vu;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,31 +8,37 @@ import java.util.ArrayList;
 
 public class InventoryGUI extends JFrame implements WindowListener{
 
+    private JLabel productTypeLabel;
+    private JLabel alcoholBrandLabel;
+    private JLabel alcoholTypeLabel;
+    private JLabel officeCountLabel;
+    private JLabel barCountLabel;
+    private JLabel distributorLabel;
 
     private JPanel rootPane;
     private JTextField brandTextField;
     private JTextField typeTextField;
-    private JLabel alcoholBrandLabel;
-    private JLabel alcoholTypeLabel;
-    private JLabel officeCountLabel;
     private JTextField officeCountTextField;
-    private JLabel barCountLabel;
     private JTextField barCountTextField;
-    private JLabel distributorLabel;
-    private JTextField distributorTextField;
     private JButton productAddButton;
     private JButton editProductButton;
     private JButton deleteProductButton;
+    private JButton exportToExcelButton;
     private JTable inventoryDataTable;
     private JComboBox<String> productTypeComboBox;
-    private JLabel productTypeLabel;
-    private JButton exportToExcelButton;
+    private JComboBox<String> distributorComboBox;
 
     private final String LIQUOR = "Liquor";
     private final String BEER = "Beer";
     private final String WINE = "Wine";
 
     private double par = 3;
+
+    private final String HOHENSTEINS = "Hohensteins";
+    private final String BREAKTHRU = "BreakThru";
+    private final String J_J_TAYLORS = "J. J Taylors";
+    private final String SOUTHERN = "Southern Wine and Spirits";
+    private final String JOHNSON_BROTHERS = "Johnson Brothers";
 
 
 
@@ -51,6 +57,12 @@ public class InventoryGUI extends JFrame implements WindowListener{
         productTypeComboBox.addItem(LIQUOR);
         productTypeComboBox.addItem(BEER);
         productTypeComboBox.addItem(WINE);
+
+        distributorComboBox.addItem(HOHENSTEINS);
+        distributorComboBox.addItem(BREAKTHRU);
+        distributorComboBox.addItem(J_J_TAYLORS);
+        distributorComboBox.addItem(SOUTHERN);
+        distributorComboBox.addItem(JOHNSON_BROTHERS);
 
 
         productAddButton.addActionListener(new ActionListener() {
@@ -96,7 +108,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
                     return;
                 }
 
-                String distributorData = distributorTextField.getText();
+                String distributorData = (String)distributorComboBox.getSelectedItem();
 
                 if (distributorData == null || distributorData.trim().equals("")) {
                     JOptionPane.showMessageDialog(rootPane, "Please enter a distributor for the product");

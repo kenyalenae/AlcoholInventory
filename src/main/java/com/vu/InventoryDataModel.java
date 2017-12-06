@@ -1,4 +1,4 @@
-package main.java.com.vu;
+package com.vu;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -8,10 +8,11 @@ import java.sql.SQLException;
 public class InventoryDataModel extends AbstractTableModel {
 
 
-
     private int rowCount = 0;
     private int colCount = 0;
-    ResultSet resultSet;
+    private static ResultSet resultSet;
+
+
 
     public InventoryDataModel(ResultSet rs) {
         this.resultSet = rs;
@@ -19,13 +20,13 @@ public class InventoryDataModel extends AbstractTableModel {
 
     }
 
-    private void setup() {
+    public void setup() {
         countRows();
 
         try {
             colCount = resultSet.getMetaData().getColumnCount();
         } catch (SQLException se) {
-            System.out.println("Error counting columns "  + se);
+            System.out.println("Error counting columns " + se);
         }
     }
 
@@ -34,7 +35,7 @@ public class InventoryDataModel extends AbstractTableModel {
         setup();
     }
 
-    private void countRows() {
+    public void countRows() {
         rowCount = 0;
         try {
             resultSet.beforeFirst();
@@ -75,6 +76,7 @@ public class InventoryDataModel extends AbstractTableModel {
 
         double newOfficeCount, newBarCount;
 
+
         try {
             newOfficeCount = Double.parseDouble(newValue.toString());
             newBarCount = Double.parseDouble(newValue.toString());
@@ -82,14 +84,14 @@ public class InventoryDataModel extends AbstractTableModel {
                 throw new NumberFormatException("Count must be a positive number");
             }
         } catch (NumberFormatException ne) {
-            JOptionPane.showMessageDialog(null,"Try entering a positive number of 0 or above");
+            JOptionPane.showMessageDialog(null, "Try entering a positive number of 0 or above");
             return;
         }
 
         try {
             resultSet.absolute(rowIndex + 1);
             resultSet.updateDouble(InventoryDatabase.OFFICE_COUNT_COLUMN, newOfficeCount);
-            resultSet.updateDouble(InventoryDatabase.BAR_COUNT_COLUMN,newBarCount);
+            resultSet.updateDouble(InventoryDatabase.BAR_COUNT_COLUMN, newBarCount);
             resultSet.updateRow();
             fireTableDataChanged();
         } catch (SQLException e) {
@@ -125,9 +127,9 @@ public class InventoryDataModel extends AbstractTableModel {
             resultSet.updateString(InventoryDatabase.TYPE_COLUMN, type);
             resultSet.updateDouble(InventoryDatabase.OFFICE_COUNT_COLUMN, amount_office);
             resultSet.updateDouble(InventoryDatabase.BAR_COUNT_COLUMN, amount_bar);
-            resultSet.updateDouble(InventoryDatabase.TOTAL_COLUMN,totalAmount);
-            resultSet.updateString(InventoryDatabase.ORDER_COLUMN,order);
-            resultSet.updateString(InventoryDatabase.DISTRIBUTOR_COLUMN,distributor);
+            resultSet.updateDouble(InventoryDatabase.TOTAL_COLUMN, totalAmount);
+            resultSet.updateString(InventoryDatabase.ORDER_COLUMN, order);
+            resultSet.updateString(InventoryDatabase.DISTRIBUTOR_COLUMN, distributor);
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
             fireTableDataChanged();
