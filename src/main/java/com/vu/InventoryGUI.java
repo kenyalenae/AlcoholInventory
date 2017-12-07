@@ -1,10 +1,13 @@
 package com.vu;
 
+import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
+import jdk.nashorn.internal.scripts.JO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
+import java.util.List;
 
 public class InventoryGUI extends JFrame implements WindowListener{
 
@@ -16,6 +19,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
     private JLabel distributorLabel;
 
     private JPanel rootPane;
+    private JPanel editPane;
     private JTextField brandTextField;
     private JTextField typeTextField;
     private JTextField officeCountTextField;
@@ -27,6 +31,9 @@ public class InventoryGUI extends JFrame implements WindowListener{
     private JTable inventoryDataTable;
     private JComboBox<String> productTypeComboBox;
     private JComboBox<String> distributorComboBox;
+    private JTextField newOfficeCount = new JTextField();
+    private JTextField newBarCount = new JTextField();
+    Object [] editMessage = {"Enter new Office count ", newOfficeCount, "Enter new Bar count", newBarCount};
 
     private final String LIQUOR = "Liquor";
     private final String BEER = "Beer";
@@ -39,6 +46,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
     private final String J_J_TAYLORS = "J. J Taylors";
     private final String SOUTHERN = "Southern Wine and Spirits";
     private final String JOHNSON_BROTHERS = "Johnson Brothers";
+
 
 
 
@@ -132,23 +140,61 @@ public class InventoryGUI extends JFrame implements WindowListener{
 
         });
 
+        editProductButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int editRow = inventoryDataTable.getSelectedRow();
+                try {
+                    if (editRow == -1) {
+                        JOptionPane.showMessageDialog(rootPane, "Please choose a product to edit");
+
+                    } else {
+                        int option = JOptionPane.showConfirmDialog(null, editMessage, "Edit Product Quantity", JOptionPane.OK_CANCEL_OPTION);
+
+                        double newOfficeEditCount = Double.parseDouble(newOfficeCount.getText());
+                        double newBarEditCount = Double.parseDouble(newBarCount.getText());
+
+                        double newTotal = newOfficeEditCount + newBarEditCount;
+                        String orderUpdate = InventoryDatabase.getOrder(newTotal,par);
+
+                        boolean updateRow = inventoryDataTableModel.updateRow(newOfficeEditCount, newBarEditCount, newTotal,orderUpdate);
+                        if (!updateRow) {
+                            JOptionPane.showMessageDialog(rootPane,"Error editing quantity");
+                        }
+                    }
+                } catch (NumberFormatException ne) {
+                    JOptionPane.showMessageDialog(rootPane, "Please enter a number 0 or greater");
+                }
+            }
+        });
+
 
         deleteProductButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int currentRow = inventoryDataTable.getSelectedRow();
+                int deleteRow = inventoryDataTable.getSelectedRow();
 
-                if (currentRow == -1) {
+                if (deleteRow == -1) {
                     JOptionPane.showMessageDialog(rootPane, "Please choose a product to delete");
-                    // TODO add yes or no box to delete
                 } else {
                     try {
-                        inventoryDataTableModel.deleteRow(currentRow);
+                        int confirmDelete = JOptionPane.showConfirmDialog(null, "Are you sure " +
+                                "you want to delete item? ","Delete",JOptionPane.YES_NO_OPTION);
+                        if (confirmDelete == JOptionPane.YES_OPTION) {
+                            inventoryDataTableModel.deleteRow(deleteRow);
+                        }
                         InventoryDatabase.loadAllProduct();
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(rootPane, "Error deleting product");
                     }
                 }
+            }
+        });
+
+        exportToExcelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
             }
         });
 

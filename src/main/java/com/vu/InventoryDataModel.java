@@ -5,6 +5,12 @@ import javax.swing.table.AbstractTableModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+
+
+
+/* This data table model is based on the same data table model as the one found in the movierating GUI program
+* */
 public class InventoryDataModel extends AbstractTableModel {
 
 
@@ -136,6 +142,24 @@ public class InventoryDataModel extends AbstractTableModel {
             return true;
         } catch (SQLException e) {
             System.out.println("Error adding row");
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public boolean updateRow(double newAmountInOffice, double newAmountInBar, double newTotal, String order) {
+        try {
+            resultSet.moveToCurrentRow();
+            resultSet.updateDouble(InventoryDatabase.OFFICE_COUNT_COLUMN, newAmountInOffice);
+            resultSet.updateDouble(InventoryDatabase.BAR_COUNT_COLUMN, newAmountInBar);
+            resultSet.updateDouble(InventoryDatabase.TOTAL_COLUMN, newTotal);
+            resultSet.updateString(InventoryDatabase.ORDER_COLUMN, order);
+            resultSet.updateRow();
+            resultSet.moveToCurrentRow();
+            fireTableDataChanged();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error updating row");
             System.out.println(e);
             return false;
         }

@@ -55,6 +55,7 @@ public class InventoryDatabase {
         return totalAmount;
     }
 
+
     static String getOrder(double totalAmount, double par) {
         String order;
         if (totalAmount <= par) {
@@ -80,6 +81,15 @@ public class InventoryDatabase {
         }
     }
 
+    static void loadOrderProduct() throws SQLException {
+        if (rs != null) {
+            rs.close();
+        }
+
+        String getOrderData;
+    }
+
+
     private static void setup() throws SQLException {
         try {
             String Driver = JDBC;
@@ -96,15 +106,16 @@ public class InventoryDatabase {
                     + PRODUCT_COLUMN + " VARCHAR(50), "
                     + BRAND_COLUMN + " VARCHAR(50), "
                     + TYPE_COLUMN + " VARCHAR(50), "
-                    + OFFICE_COUNT_COLUMN + " double, "
-                    + BAR_COUNT_COLUMN + " double, "
-                    + TOTAL_COLUMN + " double, "
+                    + OFFICE_COUNT_COLUMN + " FLOAT, "
+                    + BAR_COUNT_COLUMN + " FLOAT, "
+                    + TOTAL_COLUMN + " FLOAT, "
                     + ORDER_COLUMN + " VARCHAR(50), "
-                    + DISTRIBUTOR_COLUMN + " VARCHAR(50), PRIMARY KEY(" + PK_COLUMN + "))";
-            System.out.println(createTableSQL);
+                    + DISTRIBUTOR_COLUMN + " VARCHAR(50), CONSTRAINT UC_ALCOHOL UNIQUE ("
+                    + BRAND_COLUMN + ", " + TYPE_COLUMN+ "), PRIMARY KEY(" + PK_COLUMN + "))";
+            PreparedStatement createTableStatement = conn.prepareStatement(createTableSQL);
             statement.executeUpdate(createTableSQL);
 
-            System.out.println("created liquor table");
+            System.out.println("created alcohol table");
 
 
         if (statement.getWarnings() == null) {
@@ -152,6 +163,7 @@ public class InventoryDatabase {
                     + TOTAL_COLUMN + ", "
                     + DISTRIBUTOR_COLUMN + ")"
                     + " VALUES (?,?,?,?,?,?,?)";
+        PreparedStatement preparedStatement = conn.prepareStatement(addDataSQL);
         statement.executeUpdate(addDataSQL);
     }
 
