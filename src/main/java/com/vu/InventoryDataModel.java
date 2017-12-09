@@ -20,7 +20,7 @@ public class InventoryDataModel extends AbstractTableModel {
 
 
 
-    public InventoryDataModel(ResultSet rs) {
+    public InventoryDataModel(ResultSet rs){
         this.resultSet = rs;
         setup();
 

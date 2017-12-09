@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.WindowListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class InventoryGUI extends JFrame implements WindowListener{
@@ -59,20 +61,23 @@ public class InventoryGUI extends JFrame implements WindowListener{
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        // Sets upt the JTtable
         inventoryDataTable.setGridColor(Color.BLUE);
         inventoryDataTable.setModel(inventoryDataTableModel);
 
+        // Sets up the product type combo box
         productTypeComboBox.addItem(LIQUOR);
         productTypeComboBox.addItem(BEER);
         productTypeComboBox.addItem(WINE);
 
+        // Sets up the distributor combo box
         distributorComboBox.addItem(HOHENSTEINS);
         distributorComboBox.addItem(BREAKTHRU);
         distributorComboBox.addItem(J_J_TAYLORS);
         distributorComboBox.addItem(SOUTHERN);
         distributorComboBox.addItem(JOHNSON_BROTHERS);
 
-
+        // Sets up product add button
         productAddButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,8 +200,26 @@ public class InventoryGUI extends JFrame implements WindowListener{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                if (inventoryDataTable == null) {
+                    JOptionPane.showMessageDialog(rootPane,"inventory empty");
+                }
+                try {
+                    int exportData = JOptionPane.showConfirmDialog(null,"Export data to Excel file?",
+                            "Export to Excel",JOptionPane.YES_NO_OPTION);
+                    if (exportData == JOptionPane.YES_OPTION) {
+                        InventoryDatabase.createOrderTable();
+                        InventoryDatabase.loadOrderProduct();
+                        WriteToExcel.ExportToExcel();
+
+                    }
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
             }
         });
+
+
+
 
     }
 

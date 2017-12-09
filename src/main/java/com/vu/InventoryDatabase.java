@@ -32,6 +32,7 @@ public class InventoryDatabase {
     private static ResultSet rs = null;
 
     private final static String ALCOHOL_TABLE_NAME = "alcohol";
+    private final static String ORDER_TABLE_NAME = "order_list";
 
 
 
@@ -45,10 +46,17 @@ public class InventoryDatabase {
         setup();
         loadAllProduct();
 
+
+
+
+
+
         InventoryGUI inventoryGUI = new InventoryGUI(inventoryDataModel);
 
 
     }
+
+
 
     static double getTotalAmount(double amountInOffice, double amountInBar) {
         totalAmount = amountInOffice + amountInBar;
@@ -74,6 +82,7 @@ public class InventoryDatabase {
         String getAllData = "SELECT * FROM " + ALCOHOL_TABLE_NAME;
         rs = statement.executeQuery(getAllData);
 
+
         if (inventoryDataModel == null) {
             inventoryDataModel = new InventoryDataModel(rs);
         } else {
@@ -86,8 +95,42 @@ public class InventoryDatabase {
             rs.close();
         }
 
-        String getOrderData;
+        String getOrderData = "SELECT * FROM " + ORDER_TABLE_NAME;
+        rs = statement.executeQuery(getOrderData);
+
+
     }
+
+
+
+    public static void createOrderTable() throws SQLException {
+        try {
+            String Driver = JDBC;
+            Class.forName(Driver);
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println("No Database drivers found. quiting");
+            System.exit(-1);
+        }
+        try {
+            conn = DriverManager.getConnection(db_url + db_name, user, password);
+            statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            String createOrderTableSQL = "CREATE TABLE IF NOT EXISTS " + ORDER_TABLE_NAME + " SELECT "
+                    + BRAND_COLUMN + ", " +  TYPE_COLUMN + ", " + TOTAL_COLUMN + ", "
+                    + DISTRIBUTOR_COLUMN + " from "
+                    + ALCOHOL_TABLE_NAME + " where order_more = 'yes'";
+            PreparedStatement createOrder = conn.prepareStatement(createOrderTableSQL);
+            createOrder.execute(createOrderTableSQL);
+            System.out.println("Created order table");
+        } catch (SQLException sqle) {
+            System.out.println("Could not create order table");
+        }
+
+
+        if (statement.getWarnings() == null) {
+            addOrderData();
+        }
+    }
+
 
 
     private static void setup() throws SQLException {
@@ -98,11 +141,12 @@ public class InventoryDatabase {
             System.out.println("No database drivers found. Quitting");
             System.exit(-1);
         }
-        conn = DriverManager.getConnection(db_url + db_name, user, password);
-        statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try {
+            conn = DriverManager.getConnection(db_url + db_name, user, password);
+            statement = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS " + ALCOHOL_TABLE_NAME
-                    + " (" + PK_COLUMN + " int NOT NULL AUTO_INCREMENT, "
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS " + ALCOHOL_TABLE_NAME
+                    + " (" + PK_COLUMN + " INT NOT NULL AUTO_INCREMENT, "
                     + PRODUCT_COLUMN + " VARCHAR(50), "
                     + BRAND_COLUMN + " VARCHAR(50), "
                     + TYPE_COLUMN + " VARCHAR(50), "
@@ -111,9 +155,14 @@ public class InventoryDatabase {
                     + TOTAL_COLUMN + " FLOAT, "
                     + ORDER_COLUMN + " VARCHAR(50), "
                     + DISTRIBUTOR_COLUMN + " VARCHAR(50), CONSTRAINT UC_ALCOHOL UNIQUE ("
-                    + BRAND_COLUMN + ", " + TYPE_COLUMN+ "), PRIMARY KEY(" + PK_COLUMN + "))";
+                    + BRAND_COLUMN + ", " + TYPE_COLUMN + "), PRIMARY KEY(" + PK_COLUMN + "))";
             PreparedStatement createTableStatement = conn.prepareStatement(createTableSQL);
-            statement.executeUpdate(createTableSQL);
+            createTableStatement.execute(createTableSQL);
+        } catch (SQLException sqle) {
+            System.out.println("Could not create table");
+            sqle.printStackTrace();
+        }
+
 
             System.out.println("created alcohol table");
 
@@ -163,9 +212,22 @@ public class InventoryDatabase {
                     + TOTAL_COLUMN + ", "
                     + DISTRIBUTOR_COLUMN + ")"
                     + " VALUES (?,?,?,?,?,?,?)";
-        PreparedStatement preparedStatement = conn.prepareStatement(addDataSQL);
-        statement.executeUpdate(addDataSQL);
+        PreparedStatement addData = conn.prepareStatement(addDataSQL);
+        addData.execute(addDataSQL);
+
     }
+
+    private static void addOrderData() throws SQLException {
+        String addOrderDataSQL = "INSERT INTO " + ORDER_TABLE_NAME + "("
+                + BRAND_COLUMN + ", "
+                + TYPE_COLUMN + ", "
+                + TOTAL_COLUMN + ", "
+                + ORDER_COLUMN + ") "
+                + " VALUES (?,?,?,?)";
+        PreparedStatement addOrderData = conn.prepareStatement(addOrderDataSQL);
+        addOrderData.execute(addOrderDataSQL);
+    }
+
 
 
 
