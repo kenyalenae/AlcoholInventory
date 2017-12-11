@@ -82,26 +82,33 @@ public class InventoryGUI extends JFrame implements WindowListener{
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                // Gets product combo box selection and stores it in a string
                 String product = (String) productTypeComboBox.getSelectedItem();
-
+                // Gets data from brand text field and stores it in a string
                 String brandData = brandTextField.getText();
 
+                // Validation input to make sure the text field is not empty
                 if (brandData == null || brandData.trim().equals("")) {
                     JOptionPane.showMessageDialog(rootPane, "Please enter a brand");
                     return;
                 }
-
+                // Gets data from type textfield and stores it in a string
                 String typeData = typeTextField.getText();
+
+                // Validation input to make sure the text field is not empty
                 if (typeData == null || typeData.trim().equals("")) {
                     JOptionPane.showMessageDialog(rootPane, "Please enter a type of product");
                     return;
                 }
 
+                // Office count is going to be a double, because 2.7 bottles of vodka is a valid count
                 double officeCountData;
 
+                // Try block to catch the number format exception to make sure data input in the text field is
+                // in numerical format and a positive number 0 or greater.
                 try {
                     officeCountData = Double.parseDouble(officeCountTextField.getText());
-                    if (officeCountData < 0) {
+                    if (officeCountData <= 0) {
                         throw new NumberFormatException("Office count needs to be a number 0 or greater");
                     }
                 } catch (NumberFormatException ne) {
@@ -109,11 +116,14 @@ public class InventoryGUI extends JFrame implements WindowListener{
                     return;
                 }
 
+                // Bar count is also going to be a double
                 double barCountData;
 
+                // Try block to catch the number format exception to make sure data input in the text field is
+                // in numerical format and a positive number 0 or greater.
                 try {
                     barCountData = Double.parseDouble(barCountTextField.getText());
-                    if (barCountData < 0) {
+                    if (barCountData <= 0) {
                         throw new NumberFormatException("Office count needs to be a number 0 or greater");
                     }
                 } catch (NumberFormatException ne) {
@@ -123,21 +133,26 @@ public class InventoryGUI extends JFrame implements WindowListener{
 
                 String distributorData = (String)distributorComboBox.getSelectedItem();
 
-                if (distributorData == null || distributorData.trim().equals("")) {
-                    JOptionPane.showMessageDialog(rootPane, "Please enter a distributor for the product");
-                    return;
-                }
-
+                // Message on the backend to confirm the data
                 System.out.println("Adding " + product + " " + brandData + " " + typeData + " " + officeCountData + " " + " " + barCountData +
                         " " + distributorData);
 
+                // Calculates the total amount of bar and office count, calls the getTotalAmount method from
+                // the InventoryDatabase class
                 double totalAmount = InventoryDatabase.getTotalAmount(officeCountData, barCountData);
 
+                // Determines whether or not the product needs to be ordered, calls the the getOrder method
+                // from the InventoryDatabase class, par amount is pre-determined
                 String orderMore = InventoryDatabase.getOrder(totalAmount, par);
 
+                // Insert the data to the inventoryDataTableModel by calling the insertRow method from the
+                // InventoryDataModel class, boolean insertRow to confirm the addition of new data
                 boolean insertRow = inventoryDataTableModel.insertRow(product, brandData, typeData, officeCountData, barCountData, totalAmount,
                         orderMore, distributorData);
 
+                // If adding new product is unsuccessful, show this message.
+                // This message will be displayed if user attempts to add duplicate product, since there is
+                // a unique constraint set up on the database level
                 if (!insertRow) {
                     JOptionPane.showMessageDialog(rootPane, "Error adding new product");
                 }
@@ -145,17 +160,21 @@ public class InventoryGUI extends JFrame implements WindowListener{
 
         });
 
+        // Set up the edit product button
         editProductButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                // The row on the Jtable that user selected
                 int editRow = inventoryDataTable.getSelectedRow();
+
+                // try block to catch the number format exception
                 try {
                     if (editRow == -1) {
                         JOptionPane.showMessageDialog(rootPane, "Please choose a product to edit");
 
                     } else {
                         int option = JOptionPane.showConfirmDialog(null, editMessage, "Edit Product Quantity", JOptionPane.OK_CANCEL_OPTION);
-
                         double newOfficeEditCount = Double.parseDouble(newOfficeCount.getText());
                         double newBarEditCount = Double.parseDouble(newBarCount.getText());
 
