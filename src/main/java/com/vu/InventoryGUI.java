@@ -108,7 +108,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
                 // in numerical format and a positive number 0 or greater.
                 try {
                     officeCountData = Double.parseDouble(officeCountTextField.getText());
-                    if (officeCountData <= 0) {
+                    if (officeCountData < 0) {
                         throw new NumberFormatException("Office count needs to be a number 0 or greater");
                     }
                 } catch (NumberFormatException ne) {
@@ -123,7 +123,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
                 // in numerical format and a positive number 0 or greater.
                 try {
                     barCountData = Double.parseDouble(barCountTextField.getText());
-                    if (barCountData <= 0) {
+                    if (barCountData < 0) {
                         throw new NumberFormatException("Office count needs to be a number 0 or greater");
                     }
                 } catch (NumberFormatException ne) {
@@ -165,48 +165,76 @@ public class InventoryGUI extends JFrame implements WindowListener{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                // The row on the Jtable that user selected
+                // The row on the JTable that user selected
                 int editRow = inventoryDataTable.getSelectedRow();
+                double newOfficeEditCount;
+                double newBarEditCount;
 
-                // try block to catch the number format exception
-                try {
-                    if (editRow == -1) {
-                        JOptionPane.showMessageDialog(rootPane, "Please choose a product to edit");
+                // Make sure user selects a product row to edit
+                if (editRow == -1) {
+                    JOptionPane.showMessageDialog(rootPane, "Please choose a product to edit");
 
-                    } else {
-                        int option = JOptionPane.showConfirmDialog(null, editMessage, "Edit Product Quantity", JOptionPane.OK_CANCEL_OPTION);
-                        double newOfficeEditCount = Double.parseDouble(newOfficeCount.getText());
-                        double newBarEditCount = Double.parseDouble(newBarCount.getText());
-
-                        double newTotal = newOfficeEditCount + newBarEditCount;
-                        String orderUpdate = InventoryDatabase.getOrder(newTotal,par);
-
-                        boolean updateRow = inventoryDataTableModel.updateRow(newOfficeEditCount, newBarEditCount, newTotal,orderUpdate);
-                        if (!updateRow) {
-                            JOptionPane.showMessageDialog(rootPane,"Error editing quantity");
+                } else {
+                    // Displays edit product in a popup window with text fields for new office count and new bar count
+                    int option = JOptionPane.showConfirmDialog(null, editMessage, "Edit Product Quantity", JOptionPane.OK_CANCEL_OPTION);
+                    // Try block to catch the number format exception to make sure data input in the text field is
+                    // in numerical format and a positive number 0 or greater.
+                    try {
+                        newOfficeEditCount = Double.parseDouble(newOfficeCount.getText());
+                        if (newOfficeEditCount < 0) {
+                            throw new NumberFormatException("Office count must be 0 or greater");
+                            }
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(rootPane,"Office count must be 0 or greater");
+                        return;
                         }
+                    // Try block to catch the number format exception to make sure data input in the text field is
+                    // in numerical format and a positive number 0 or greater.
+                    try {
+                        newBarEditCount = Double.parseDouble(newBarCount.getText());
+                        if (newBarEditCount < 0) {
+                            throw new NumberFormatException("Bar count must be 0 or greater");
+                            }
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(rootPane, "Bar count must be 0 or greater");
+                        return;
                     }
-                } catch (NumberFormatException ne) {
-                    JOptionPane.showMessageDialog(rootPane, "Please enter a number 0 or greater");
+
+                    // Calculates the new total
+                    double newTotal = newOfficeEditCount + newBarEditCount;
+                    // Changes the par
+                    String orderUpdate = InventoryDatabase.getOrder(newTotal,par);
+                    // Updates the data to the inventoryDataTableModel by calling the insertRow method from the
+                    // InventoryDataModel class, boolean insertRow to confirm the addition of new data
+                    boolean updateRow = inventoryDataTableModel.updateRow(newOfficeEditCount, newBarEditCount, newTotal,orderUpdate);
+
+                    // If updating the row unsuccessful, show this message
+                    if (!updateRow) {
+                        JOptionPane.showMessageDialog(rootPane,"Error editing quantity");
+                        }
                 }
             }
         });
 
-
+        // Set up the delete button product
         deleteProductButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Select a row from JTable to delete
                 int deleteRow = inventoryDataTable.getSelectedRow();
-
+                // Make sure user select a product row to delete
                 if (deleteRow == -1) {
                     JOptionPane.showMessageDialog(rootPane, "Please choose a product to delete");
                 } else {
                     try {
+                        // Popup window with a yes or no option to confirm row deletion
                         int confirmDelete = JOptionPane.showConfirmDialog(null, "Are you sure " +
                                 "you want to delete item? ","Delete",JOptionPane.YES_NO_OPTION);
                         if (confirmDelete == JOptionPane.YES_OPTION) {
+                            // Deletes the row from JTable
                             inventoryDataTableModel.deleteRow(deleteRow);
                         }
+                        // Updates the database and JTable
                         InventoryDatabase.loadAllProduct();
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(rootPane, "Error deleting product");
@@ -215,19 +243,27 @@ public class InventoryGUI extends JFrame implements WindowListener{
             }
         });
 
+        // Set up the export to excel button
         exportToExcelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                // if JTable is empty, cannot export an empty table to excel file
                 if (inventoryDataTable == null) {
                     JOptionPane.showMessageDialog(rootPane,"inventory empty");
                 }
+                // Try block to catch SQLException
                 try {
+                    // Popup window to confirm exporting data from database to excel file
                     int exportData = JOptionPane.showConfirmDialog(null,"Export data to Excel file?",
                             "Export to Excel",JOptionPane.YES_NO_OPTION);
+                    // If user clicks yes
                     if (exportData == JOptionPane.YES_OPTION) {
+                        // Create a table called order_list in the database
                         InventoryDatabase.createOrderTable();
+                        // Retrieves the order_list resultSet
                         InventoryDatabase.loadOrderProduct();
+                        // Writes data to excel file
                         WriteToExcel.ExportToExcel();
 
                     }
@@ -245,6 +281,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
 
     @Override
     public void windowClosing(WindowEvent e){
+            // Shutdown database on closing
             System.out.println("closing");
             InventoryDatabase.shutdown();
         }
