@@ -9,7 +9,8 @@ import java.sql.SQLException;
 
 
 
-/* This data table model is based on the same data table model as the one found in the movierating GUI program
+/* This data table model is based on the same data table model as the one found in the movieRatingGUI program by
+Clara James
 * */
 public class InventoryDataModel extends AbstractTableModel {
 
@@ -26,7 +27,7 @@ public class InventoryDataModel extends AbstractTableModel {
 
     }
 
-    public void setup() {
+    private void setup() {
         countRows();
 
         try {
@@ -41,10 +42,11 @@ public class InventoryDataModel extends AbstractTableModel {
         setup();
     }
 
-    public void countRows() {
+    private void countRows() {
         rowCount = 0;
         try {
-            resultSet.beforeFirst();
+            resultSet.beforeFirst(); // Move cursor to the start
+            // next() method moves cursor forward one row and returns true if theres another row ahead
             while (resultSet.next()) {
                 rowCount++;
             }
