@@ -80,6 +80,7 @@ public class InventoryDataModel extends AbstractTableModel {
     }
 
     @Override
+    // This is called when user edits an editable cell
     public void setValueAt(Object newValue, int rowIndex, int colIndex) {
 
         double newOfficeCount, newBarCount;
@@ -88,6 +89,7 @@ public class InventoryDataModel extends AbstractTableModel {
         try {
             newOfficeCount = Double.parseDouble(newValue.toString());
             newBarCount = Double.parseDouble(newValue.toString());
+            // If newOfficeCount or newBarCount are less than 0
             if (newOfficeCount < 0 || newBarCount < 0) {
                 throw new NumberFormatException("Count must be a positive number");
             }
@@ -96,25 +98,30 @@ public class InventoryDataModel extends AbstractTableModel {
             return;
         }
 
+        // If count is valid
+        // Saves the information back to the database
         try {
             resultSet.absolute(rowIndex + 1);
             resultSet.updateDouble(InventoryDatabase.OFFICE_COUNT_COLUMN, newOfficeCount);
             resultSet.updateDouble(InventoryDatabase.BAR_COUNT_COLUMN, newBarCount);
             resultSet.updateRow();
-            fireTableDataChanged();
+            fireTableDataChanged(); // Tells table to redraw itself
         } catch (SQLException e) {
             System.out.println("Error changing inventory count " + e);
         }
     }
 
     @Override
+    // Only column 4 and column 5 are editable
     public boolean isCellEditable(int rowIndex, int colIndex) {
         if (colIndex == 4 || colIndex == 5) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
+    // Method to delete row in the table, and updates database, returns true if successful, false if error occurs
     public boolean deleteRow(int rowIndex) {
         try {
             resultSet.absolute(rowIndex + 1);
@@ -127,6 +134,7 @@ public class InventoryDataModel extends AbstractTableModel {
         }
     }
 
+    // Method to insert row to the table, and updates the database, returns true if successful, false if error occurs
     public boolean insertRow(String product, String brand, String type, double amount_office, double amount_bar, double totalAmount, String order, String distributor) {
         try {
             resultSet.moveToInsertRow();
@@ -149,6 +157,7 @@ public class InventoryDataModel extends AbstractTableModel {
         }
     }
 
+    // Method to update row in the table
     public boolean updateRow(double newAmountInOffice, double newAmountInBar, double newTotal, String order) {
         try {
             resultSet.moveToCurrentRow();

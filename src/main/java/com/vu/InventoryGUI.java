@@ -206,7 +206,7 @@ public class InventoryGUI extends JFrame implements WindowListener{
                     String orderUpdate = InventoryDatabase.getOrder(newTotal,par);
                     // Updates the data to the inventoryDataTableModel by calling the insertRow method from the
                     // InventoryDataModel class, boolean insertRow to confirm the addition of new data
-                    boolean updateRow = inventoryDataTableModel.updateRow(newOfficeEditCount, newBarEditCount, newTotal,orderUpdate);
+                    boolean updateRow = inventoryDataTableModel.updateRow(newOfficeEditCount, newBarEditCount, newTotal, orderUpdate);
 
                     // If updating the row unsuccessful, show this message
                     if (!updateRow) {
@@ -283,7 +283,14 @@ public class InventoryGUI extends JFrame implements WindowListener{
     public void windowClosing(WindowEvent e){
             // Shutdown database on closing
             System.out.println("closing");
+            try {
+                // deletes order_list after the program is closed
+                InventoryDatabase.deleteOrderTable();
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
             InventoryDatabase.shutdown();
+
         }
 
     @Override

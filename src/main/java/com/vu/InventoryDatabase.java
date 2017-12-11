@@ -251,6 +251,13 @@ public class InventoryDatabase {
         addOrderData.execute(addOrderDataSQL);
     }
 
+    // Method to delete order table
+    static void deleteOrderTable() throws SQLException {
+        String deleteOrderTableData = "DROP TABLE " + ORDER_TABLE_NAME;
+        PreparedStatement deleteOrderData = conn.prepareStatement(deleteOrderTableData);
+        deleteOrderData.execute();
+    }
+
 
 
 
