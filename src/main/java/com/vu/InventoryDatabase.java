@@ -136,14 +136,15 @@ public class InventoryDatabase {
             PreparedStatement createOrder = conn.prepareStatement(createOrderTableSQL);
             createOrder.execute(createOrderTableSQL);
             System.out.println("Created order table");
+            // Checks for warnings
+            if (statement.getWarnings() == null) {
+                addOrderData();
+            }
         } catch (SQLException sqle) {
             System.out.println("Could not create order table");
         }
 
-        // Checks for warnings
-        if (statement.getWarnings() == null) {
-            addOrderData(); // Add order data
-        }
+
     }
 
 
@@ -179,6 +180,12 @@ public class InventoryDatabase {
                     + BRAND_COLUMN + ", " + TYPE_COLUMN + "), PRIMARY KEY(" + PK_COLUMN + "))";
             PreparedStatement createTableStatement = conn.prepareStatement(createTableSQL);
             createTableStatement.execute(createTableSQL);
+            // Checks for warnings
+            if (statement.getWarnings() == null) {
+                addAlcoholData();
+            }
+
+
         } catch (SQLException sqle) {
             System.out.println("Could not create table");
             sqle.printStackTrace();
@@ -187,10 +194,6 @@ public class InventoryDatabase {
 
             System.out.println("created alcohol table");
 
-        // Checks for warnings
-        if (statement.getWarnings() == null) {
-            addAlcoholData();
-        }
 
     }
     // Closes ResultSet, statement, and connection
@@ -224,7 +227,8 @@ public class InventoryDatabase {
     }
     // Method to insert data into the alcohol table
     private static void addAlcoholData() throws SQLException {
-        String addDataSQL = "INSERT INTO " + ALCOHOL_TABLE_NAME + "("
+        try {
+            String addDataSQL = "INSERT INTO " + ALCOHOL_TABLE_NAME + "("
                     + PRODUCT_COLUMN + ", "
                     + BRAND_COLUMN + ", "
                     + TYPE_COLUMN + ", "
@@ -233,29 +237,40 @@ public class InventoryDatabase {
                     + TOTAL_COLUMN + ", "
                     + DISTRIBUTOR_COLUMN + ")"
                     + " VALUES (?,?,?,?,?,?,?)";
-        PreparedStatement addData = conn.prepareStatement(addDataSQL);
-        addData.execute(addDataSQL);
+            PreparedStatement addData = conn.prepareStatement(addDataSQL);
+            addData.execute(addDataSQL);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
 
     }
 
     // Method to insert data into the order table
     private static void addOrderData() throws SQLException {
-        String addOrderDataSQL = "INSERT INTO " + ORDER_TABLE_NAME + "("
-                + PK_COLUMN + ", "
-                + BRAND_COLUMN + ", "
-                + TYPE_COLUMN + ", "
-                + TOTAL_COLUMN + ", "
-                + ORDER_COLUMN + ") "
-                + " VALUES (?,?,?,?)";
-        PreparedStatement addOrderData = conn.prepareStatement(addOrderDataSQL);
-        addOrderData.execute(addOrderDataSQL);
+        try {
+            String addOrderDataSQL = "INSERT INTO " + ORDER_TABLE_NAME + "("
+                    + PK_COLUMN + ", "
+                    + BRAND_COLUMN + ", "
+                    + TYPE_COLUMN + ", "
+                    + TOTAL_COLUMN + ", "
+                    + ORDER_COLUMN + ") "
+                    + " VALUES (?,?,?,?)";
+            PreparedStatement addOrderData = conn.prepareStatement(addOrderDataSQL);
+            addOrderData.execute(addOrderDataSQL);
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
     }
 
     // Method to delete order table
     static void deleteOrderTable() throws SQLException {
-        String deleteOrderTableData = "DROP TABLE " + ORDER_TABLE_NAME;
-        PreparedStatement deleteOrderData = conn.prepareStatement(deleteOrderTableData);
-        deleteOrderData.execute();
+        try {
+            String deleteOrderTableData = "DROP TABLE " + ORDER_TABLE_NAME;
+            PreparedStatement deleteOrderData = conn.prepareStatement(deleteOrderTableData);
+            deleteOrderData.execute();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
     }
 
 

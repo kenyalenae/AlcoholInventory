@@ -47,9 +47,7 @@ public class InventoryDataModel extends AbstractTableModel {
         try {
             resultSet.beforeFirst(); // Move cursor to the start
             // next() method moves cursor forward one row and returns true if theres another row ahead
-            while (resultSet.next()) {
-                rowCount++;
-            }
+            while (resultSet.next()) rowCount++;
             resultSet.beforeFirst();
         } catch (SQLException se) {
             System.out.println("Error counting rows " + se);
@@ -114,7 +112,7 @@ public class InventoryDataModel extends AbstractTableModel {
     @Override
     // Only column 4 and column 5 are editable
     public boolean isCellEditable(int rowIndex, int colIndex) {
-        if (colIndex == 4 || colIndex == 5) {
+        if (colIndex == 5 || colIndex == 6) {
             return true;
         } else {
             return false;
