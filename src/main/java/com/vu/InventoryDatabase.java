@@ -50,7 +50,7 @@ public class InventoryDatabase {
         // Creates a table if not exist, retrieves the result set in the database
         setup();
         loadAllProduct();
-        createOrderTable();
+
 
         // Start the GUI
         InventoryGUI inventoryGUI = new InventoryGUI(inventoryDataModel);
