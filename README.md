@@ -5,4 +5,5 @@ This program contains a GUI interface that accepts user input in the form of com
 The interface contains an add product button, which adds the product to the database and updates the Jtable. 
 An edit product button that generates a popup window with text fields to update the product quantities to the JTable and Database.
 A delete button to delete a row in the JTable and database table. An Export to excel button that generates an order list in the form of 
-a table in the database and then exports it onto an excel spreadsheet file to print.
+
+a table in the database and then exports it onto an excel spreadsheet file to print. To run this, you need to have create a database called alcohol_inventory, then set the environmental variables in InventoryDatabase class
