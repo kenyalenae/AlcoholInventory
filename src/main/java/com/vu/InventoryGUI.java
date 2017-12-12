@@ -270,6 +270,8 @@ public class InventoryGUI extends JFrame implements WindowListener{
                     if (exportData == JOptionPane.YES_OPTION) {
                         // Create a table called order_list in the database
                         InventoryDatabase.createOrderTable();
+                        // Loads order_list table ResultSet
+                        InventoryDatabase.loadOrderProduct();
                         // Writes data to excel file
                         WriteToExcel.ExportToExcel();
                     }
