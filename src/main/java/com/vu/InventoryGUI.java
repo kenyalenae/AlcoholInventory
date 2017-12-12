@@ -21,7 +21,6 @@ public class InventoryGUI extends JFrame implements WindowListener{
     private JLabel distributorLabel;
 
     private JPanel rootPane;
-    private JPanel editPane;
     private JTextField brandTextField;
     private JTextField typeTextField;
     private JTextField officeCountTextField;

@@ -163,7 +163,7 @@ public class InventoryDatabase {
         try {
             // Creates connection with database
             conn = DriverManager.getConnection(db_url + db_name, user, password);
-            // ResultSet.TYPE_SCROLL_SENSITIVE allows movement of cursor forward and backwards through RowSet
+            // ResultSet.TYPE_SCROLL_INSENSITIVE allows movement of cursor forward and backwards through RowSet
             // ResultSet can be changed and updated to the database
             statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             // Creates alcohol table
