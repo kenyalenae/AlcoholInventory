@@ -30,7 +30,7 @@ public class WriteToExcel extends InventoryDatabase{
     private static final String password = System.getenv("MYSQL_PASSWORD");
 
     // Output file path
-    private static final String FILE_NAME = "/Users/vutran/Desktop/TestExcel/OrderList.xls";
+    private static final String FILE_NAME = "src/OrderList.xls";
 
     // Initialize the database connection variables
     private static Statement statement = null;
