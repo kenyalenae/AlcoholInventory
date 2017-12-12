@@ -134,7 +134,7 @@ public class InventoryDatabase {
                     + DISTRIBUTOR_COLUMN + " from "
                     + ALCOHOL_TABLE_NAME + " where order_more = 'yes'";
             PreparedStatement createOrder = conn.prepareStatement(createOrderTableSQL);
-            createOrder.execute(createOrderTableSQL);
+            createOrder.execute();
             System.out.println("Created order table");
             // Checks for warnings
             if (statement.getWarnings() == null) {
@@ -179,7 +179,7 @@ public class InventoryDatabase {
                     + DISTRIBUTOR_COLUMN + " VARCHAR(50), CONSTRAINT UC_ALCOHOL UNIQUE ("
                     + BRAND_COLUMN + ", " + TYPE_COLUMN + "), PRIMARY KEY(" + PK_COLUMN + "))";
             PreparedStatement createTableStatement = conn.prepareStatement(createTableSQL);
-            createTableStatement.execute(createTableSQL);
+            createTableStatement.execute();
             // Checks for warnings
             if (statement.getWarnings() == null) {
                 addAlcoholData();
@@ -238,7 +238,7 @@ public class InventoryDatabase {
                     + DISTRIBUTOR_COLUMN + ")"
                     + " VALUES (?,?,?,?,?,?,?)";
             PreparedStatement addData = conn.prepareStatement(addDataSQL);
-            addData.execute(addDataSQL);
+            addData.execute();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
@@ -256,7 +256,7 @@ public class InventoryDatabase {
                     + ORDER_COLUMN + ") "
                     + " VALUES (?,?,?,?)";
             PreparedStatement addOrderData = conn.prepareStatement(addOrderDataSQL);
-            addOrderData.execute(addOrderDataSQL);
+            addOrderData.execute();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
