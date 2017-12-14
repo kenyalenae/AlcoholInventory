@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
+// Author: Vu Tran
+
 //I got the code to export result set to Database from
 // http://thinktibits.blogspot.com/2012/12/POI-Create-Excel-File-JDBC-Oracle-Table-Data-Example.html
 public class WriteToExcel extends InventoryDatabase{

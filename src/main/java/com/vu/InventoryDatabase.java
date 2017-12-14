@@ -7,6 +7,8 @@ import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+// Author: Vu Tran
+
 // This Database class was based off of movieRatingGUI application by Clara James
 public class InventoryDatabase {
 

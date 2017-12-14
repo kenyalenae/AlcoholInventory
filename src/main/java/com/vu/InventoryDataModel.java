@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-
+// Author: Vu Tran
 
 
 /* This data table model is based on the same data table model as the one found in the movieRatingGUI program by
